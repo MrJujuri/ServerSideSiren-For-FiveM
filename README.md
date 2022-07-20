@@ -9,7 +9,7 @@ Some fixes by me
 wm-sirens by Walshey
 
 This is plug and play resource
-you just need to start it on you resouce or server.cfg
+you just need to start it on you resource or server.cfg
 using this
 
 start wm-serversirens
