@@ -1,6 +1,6 @@
 --[[
 ---------------------------------------------------
-LUXART VEHICLE CONTROL ELS CLICKS (3.0v Realism) (FOR FIVEM)
+LUXART VEHICLE CONTROL ELS CLICKS (2.1 Bug Fix) (FOR FIVEM)
 ---------------------------------------------------
 Last revision: MAY 01 2017 (VERS. 1.01)
 Coded by Lt.Caine
@@ -42,14 +42,6 @@ local eModelsWithPcall =
 
 -- Change to false for no light beep reminder
 lightreminder = true
-
-
--- these models will disabled regardless of emergency vehicle class
-local eModelsDisabled =
-{
-	"NONE",
-}
-
 ---------------------------------------------------
 
 RequestScriptAudioBank("DLC_WMSIRENS\\SIRENPACK_ONE", false)
@@ -89,8 +81,8 @@ Citizen.Wait(100)
   player_s = GetPlayerFromServerId(sender)
   ped_s = GetPlayerPed(player_s)
   veh = GetVehiclePedIsUsing(ped_s)
-		Citizen.Wait(12000)
-			if GetPedInVehicleSeat(veh, -1) == ped_s and IsVehicleSirenOn(veh) and GetVehicleClass(veh) == 18 and lightreminder and not disablesiren(veh) then
+		Citizen.Wait(7000)
+			if GetPedInVehicleSeat(veh, -1) == ped_s and IsVehicleSirenOn(veh) and GetVehicleClass(veh) == 18 and lightreminder then
 			TriggerEvent("lux_vehcontrol:ELSClick", "Beep", 0.3)
 		end
 	end
@@ -116,16 +108,6 @@ function usePowercallAuxSrn(veh)
 	local model = GetEntityModel(veh)
 	for i = 1, #eModelsWithPcall, 1 do
 		if model == GetHashKey(eModelsWithPcall[i]) then
-			return true
-		end
-	end
-	return false
-end
-----------------------------------------------------------------------------------------------------
-function disablesiren(veh)
-	local model = GetEntityModel(veh)
-	for i = 1, #eModelsDisabled, 1 do
-		if model == GetHashKey(eModelsDisabled[i]) then
 			return true
 		end
 	end
@@ -218,20 +200,24 @@ function SetLxSirenStateForVeh(veh, newstate)
 					TogMuteDfltSrnForVeh(veh, false)
 				else
 					snd_lxsiren[veh] = GetSoundId()	
+					-- PlaySoundFromEntity(snd_lxsiren[veh], "SIREN_ALPHA", "DLC_WMSIRENS_SOUNDSET", veh, 0, 0, 0)
 					PlaySoundFromEntity(snd_lxsiren[veh], "siren_alpha", veh, "DLC_WMSIRENS_SOUNDSET", 0, 0)
 					TogMuteDfltSrnForVeh(veh, true)
 				end
 
 			elseif newstate == 2 then
 				snd_lxsiren[veh] = GetSoundId()
+				-- PlaySoundFromEntity(snd_lxsiren[veh], "SIREN_BRAVO", "DLC_WMSIRENS_SOUNDSET", veh, 0, 0, 0)
 				PlaySoundFromEntity(snd_lxsiren[veh], "siren_bravo", veh, "DLC_WMSIRENS_SOUNDSET", 0, 0)
 				TogMuteDfltSrnForVeh(veh, true)
 
 			elseif newstate == 3 then
 				snd_lxsiren[veh] = GetSoundId()
 				if useFiretruckSiren(veh) then
+					-- PlaySoundFromEntity(snd_lxsiren[veh], "VEHICLES_HORNS_AMBULANCE_WARNING", veh, 0, 0, 0)
 					PlaySoundFromEntity(snd_lxsiren[veh], "siren_charlie", veh, "DLC_WMSIRENS_SOUNDSET", 0, 0)
 				else
+					-- PlaySoundFromEntity(snd_lxsiren[veh], "VEHICLES_HORNS_POLICE_WARNING", veh, 0, 0, 0)
 					PlaySoundFromEntity(snd_lxsiren[veh], "siren_charlie", veh, "DLC_WMSIRENS_SOUNDSET", 0, 0)
 				end
 				TogMuteDfltSrnForVeh(veh, true)
@@ -252,9 +238,11 @@ function TogPowercallStateForVeh(veh, toggle)
 			if snd_pwrcall[veh] == nil then
 				snd_pwrcall[veh] = GetSoundId()
 				if usePowercallAuxSrn(veh) then
-					PlaySoundFromEntity(snd_pwrcall[veh], "siren_charlie", veh, "DLC_WMSIRENS_SOUNDSET", 0, 0)
+					-- PlaySoundFromEntity(snd_pwrcall[veh], "VEHICLES_HORNS_AMBULANCE_WARNING", veh, 0, 0, 0)
+					PlaySoundFromEntity(snd_lxsiren[veh], "siren_charlie", veh, "DLC_WMSIRENS_SOUNDSET", 0, 0)
 				else
-					PlaySoundFromEntity(snd_pwrcall[veh], "siren_alpha", veh, "DLC_WMSIRENS_SOUNDSET", 0, 0)
+					-- PlaySoundFromEntity(snd_pwrcall[veh], "VEHICLES_HORNS_SIREN_1", veh, 0, 0, 0)
+					PlaySoundFromEntity(snd_lxsiren[veh], "siren_alpha", veh, "DLC_WMSIRENS_SOUNDSET", 0, 0)
 				end
 			end
 ----------------------------------------------------------------------------------------------------
@@ -282,18 +270,22 @@ function SetAirManuStateForVeh(veh, newstate)
 			if newstate == 1 then
 				snd_airmanu[veh] = GetSoundId()
 				if useFiretruckSiren(veh) then
-					PlaySoundFromEntity(snd_airmanu[veh], "VEHICLES_HORNS_FIRETRUCK_WARNING", veh, 0, 0, 0)
+					-- PlaySoundFromEntity(snd_airmanu[veh], "VEHICLES_HORNS_FIRETRUCK_WARNING", veh, 0, 0, 0)
+					PlaySoundFromEntity(snd_lxsiren[veh], "siren_bravo", veh, "DLC_WMSIRENS_SOUNDSET", 0, 0)
 				else
-					PlaySoundFromEntity(snd_airmanu[veh], "SIRENS_AIRHORN", veh, 0, 0, 0)
+					-- PlaySoundFromEntity(snd_airmanu[veh], "SIRENS_AIRHORN", veh, 0, 0, 0)
+					PlaySoundFromEntity(snd_lxsiren[veh], "siren_alpha", veh, "DLC_WMSIRENS_SOUNDSET", 0, 0)
 				end
 
 			elseif newstate == 2 then
 				snd_airmanu[veh] = GetSoundId()
-				PlaySoundFromEntity(snd_airmanu[veh], "siren_alpha", veh, "DLC_WMSIRENS_SOUNDSET", 0, 0)
+				-- PlaySoundFromEntity(snd_airmanu[veh], "VEHICLES_HORNS_SIREN_1", veh, 0, 0, 0)
+				PlaySoundFromEntity(snd_lxsiren[veh], "siren_bravo", veh, "DLC_WMSIRENS_SOUNDSET", 0, 0)
 			
 			elseif newstate == 3 then
 				snd_airmanu[veh] = GetSoundId()
-				PlaySoundFromEntity(snd_airmanu[veh], "siren_bravo", veh, "DLC_WMSIRENS_SOUNDSET", 0, 0)
+				-- PlaySoundFromEntity(snd_airmanu[veh], "VEHICLES_HORNS_SIREN_2", veh, 0, 0, 0)
+				PlaySoundFromEntity(snd_lxsiren[veh], "siren_charlie", veh, "DLC_WMSIRENS_SOUNDSET", 0, 0)
 			end				
 			state_airmanu[veh] = newstate
 		end
@@ -313,22 +305,27 @@ function SetAirManuStateForVehClick(veh, newstate)
 			if newstate == 1 then
 				snd_airmanu[veh] = GetSoundId()
 				if useFiretruckSiren(veh) then
-					PlaySoundFromEntity(snd_airmanu[veh], "VEHICLES_HORNS_FIRETRUCK_WARNING", veh, 0, 0, 0)
+					-- PlaySoundFromEntity(snd_airmanu[veh], "VEHICLES_HORNS_FIRETRUCK_WARNING", veh, 0, 0, 0)
+					PlaySoundFromEntity(snd_lxsiren[veh], "siren_charlie", veh, "DLC_WMSIRENS_SOUNDSET", 0, 0)
 					TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", 0.3)
 				else
 					TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", 0.3)
 					PlaySoundFromEntity(snd_airmanu[veh], "SIRENS_AIRHORN", veh, 0, 0, 0)
+					-- PlaySoundFromEntity(snd_lxsiren[veh], "siren_bravo", veh, "DLC_WMSIRENS_SOUNDSET", 0, 0)
 				end
 ----------------------------------------------------------------------------------------------------
 			elseif newstate == 2 then
 				snd_airmanu[veh] = GetSoundId()
 				TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", 0.4)
-				PlaySoundFromEntity(snd_airmanu[veh], "VEHICLES_HORNS_SIREN_1", veh, 0, 0, 0)
+				-- PlaySoundFromEntity(snd_airmanu[veh], "VEHICLES_HORNS_SIREN_1", veh, 0, 0, 0)
+				PlaySoundFromEntity(snd_airmanu[veh], "siren_bravo", veh, "DLC_WMSIRENS_SOUNDSET", veh, 0, 0, 0)
+				-- PlaySoundFromEntity(snd_lxsiren[veh], "siren_bravo", veh, "DLC_WMSIRENS_SOUNDSET", 0, 0, 0)
 			
 			elseif newstate == 3 then
 				snd_airmanu[veh] = GetSoundId()
 				TriggerEvent("lux_vehcontrol:ELSClick", "Upgrade", 0.2)
-				PlaySoundFromEntity(snd_airmanu[veh], "VEHICLES_HORNS_SIREN_2", veh, 0, 0, 0)
+				-- PlaySoundFromEntity(snd_airmanu[veh], "VEHICLES_HORNS_SIREN_2", veh, 0, 0, 0)
+				PlaySoundFromEntity(snd_airmanu[veh], "siren_charlie", veh, "DLC_WMSIRENS_SOUNDSET", veh, 0, 0, 0)
 			end				
 			state_airmanu[veh] = newstate
 		end
@@ -467,7 +464,7 @@ Citizen.CreateThread(function()
 					end
 ----------------------------------------------------------------------------------------------------
 					--- IS EMERG VEHICLE ---
-					if GetVehicleClass(veh) == 18 and not disablesiren(veh) then
+					if GetVehicleClass(veh) == 18 then
 						
 						local actv_manu = false
 						local actv_horn = false
@@ -633,7 +630,7 @@ Citizen.CreateThread(function()
 					end
 ----------------------------------------------------------------------------------------------------
 					--- IS ANY LAND VEHICLE ---	
-					if GetVehicleClass(veh) ~= 14 and GetVehicleClass(veh) ~= 15 and GetVehicleClass(veh) ~= 16 and GetVehicleClass(veh) ~= 21 and disablesiren(veh) then
+					if GetVehicleClass(veh) ~= 14 and GetVehicleClass(veh) ~= 15 and GetVehicleClass(veh) ~= 16 and GetVehicleClass(veh) ~= 21 then
 ----------------------------------------------------------------------------------------------------
 						----- CONTROLS -----
 						if not IsPauseMenuActive() then
@@ -688,7 +685,7 @@ Citizen.CreateThread(function()
 							count_bcast_timer = 0
 ----------------------------------------------------------------------------------------------------
 							--- IS EMERG VEHICLE ---
-							if GetVehicleClass(veh) == 18 and not disablesiren(veh) then
+							if GetVehicleClass(veh) == 18 then
 								TriggerServerEvent("lvc_TogDfltSrnMuted_s", dsrn_mute)
 								TriggerServerEvent("lvc_SetLxSirenState_s", state_lxsiren[veh])
 								TriggerServerEvent("lvc_TogPwrcallState_s", state_pwrcall[veh])
