@@ -1,13 +1,13 @@
 resource_manifest_version '77731fab-63ca-442c-a67b-abc70f28dfa5'
-ui_page('index.html')
+ui_page('html/index.html')
 
 files({
     'index.html',
-	'sounds/On.ogg',
-	'sounds/Upgrade.ogg',
-	'sounds/Off.ogg',
-	'sounds/Beep.ogg',
-	'sounds/Downgrade.ogg'
+	'html/sounds/On.ogg',
+	'html/sounds/Upgrade.ogg',
+	'html/sounds/Off.ogg',
+	'html/sounds/Beep.ogg',
+	'html/sounds/Downgrade.ogg'
 })
 
 client_script 'client.lua'
